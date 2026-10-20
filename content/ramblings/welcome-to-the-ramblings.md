@@ -1,27 +1,15 @@
 ---
-title: Welcome to the ramblings
-date: 2026-10-18
-summary: A placeholder first post explaining what this corner of the site is for.
-tags: [meta]
-cover: /uploads/covers/sample-cover-1.jpg
+title: You should try drawing some more
+date: 2026-10-20
+summary: Oh boy do I have a lot to say coming up
+tags:
+  - life
+cover: /uploads/covers/IMG_2070.jpeg
+draft: false
 ---
 
-*This is a sample post. Delete it from `/admin` (or `content/ramblings/`) when you write your first real one.*
+I’ve been learning to draw (and from that paint) for over 3 years now. There’s ups and downs of motivations for sure, but if there’s one thing that I can guarantee you about how my life will go, I’ll continue to draw and paint until I’m under the ground.
 
-Ramblings are the long-form, no-particular-topic posts. Anything goes: a thought that wouldn't leave, a project post-mortem, a recipe that went sideways.
+I didn’t think I’d develop such an attachment to drawing when I started, but I knew pretty quickly that this is one of my _things_ in life - ya know what I mean?
 
-## What a post can hold
-
-Everything Markdown does, including **bold**, *italic*, [links](https://example.com), and lists:
-
-- Headings for structure
-- Block quotes for when someone else said it better
-- Images, which get resized and lazy-loaded automatically
-
-> The best time to write it down was when you thought of it. The second best time is now.
-
-![A sample landscape](/uploads/gallery/sample-river.jpg "Images with a title get a caption.")
-
-```js
-console.log('Code blocks work too.')
-```
+## What makes learning how to draw feel so good?
