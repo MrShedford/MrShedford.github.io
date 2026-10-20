@@ -1,10 +1,6 @@
-# Site-wide settings. Editable in the CMS under "Site settings".
-name: Your Name
-tagline: Ramblings, ravings, and the things I've made.
-intro: |
-  Hi, I'm **Your Name**. This is where I write long things about small
-  things, tell you exactly how great something is, and keep a record of the
-  work I'm proud of. *(Placeholder: replace this from /admin.)*
+name: Seán
+tagline: Rambling and raving about all sorts of stuff
+intro: Hi, I'm **Seán**. This is just a collection of things going on in my brain
 portfolioPdf: /files/portfolio.pdf
 socials:
   - label: GitHub
