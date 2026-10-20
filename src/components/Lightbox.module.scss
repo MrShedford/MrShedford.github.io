@@ -1,0 +1,165 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// Always dark, whatever the site theme: photos read best on near-black.
+.dialog {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(18 12 10 / 0.96);
+  color: #f1e6d8;
+
+  &::backdrop {
+    background: rgb(18 12 10 / 0.7);
+  }
+
+  @include motion-safe {
+    animation: fade 250ms $ease-out;
+  }
+}
+
+.frame {
+  position: relative;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-3 $space-4;
+}
+
+.counter {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+.iconButton {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgb(241 230 216 / 0.2);
+  border-radius: 50%;
+  background: rgb(241 230 216 / 0.06);
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    opacity 150ms;
+
+  &:hover:not(:disabled) {
+    background: rgb(241 230 216 / 0.16);
+    border-color: #e08a62;
+  }
+
+  &:disabled {
+    opacity: 0.25;
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #e08a62;
+    outline-offset: 2px;
+  }
+}
+
+.stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+  padding: 0 72px;
+  touch-action: pan-y;
+  user-select: none;
+
+  @include below($bp-mobile) {
+    padding: 0;
+  }
+}
+
+.image {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: $radius-sm;
+  -webkit-user-drag: none;
+
+  @include motion-safe {
+    animation: fade 300ms $ease-out;
+  }
+}
+
+.prev,
+.next {
+  composes: iconButton;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  @include below($bp-mobile) {
+    display: none;
+  }
+}
+
+.prev {
+  left: $space-4;
+}
+
+.next {
+  right: $space-4;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: $space-3 $space-6;
+  padding: $space-4 $space-5 $space-5;
+}
+
+.title {
+  font-size: 1.4rem;
+}
+
+.caption {
+  margin-top: $space-1;
+  opacity: 0.75;
+  max-width: 60ch;
+}
+
+.exif {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2 $space-5;
+  margin: 0;
+  font-size: 0.8125rem;
+
+  dt {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    opacity: 0.55;
+  }
+
+  dd {
+    margin: 0;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}

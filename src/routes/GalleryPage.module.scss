@@ -1,0 +1,72 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// Masonry via CSS columns: every photo keeps its own aspect ratio.
+.masonry {
+  columns: 3 280px;
+  column-gap: $space-4;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  break-inside: avoid;
+  margin-bottom: $space-4;
+}
+
+.tile {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: var(--surface-sunken);
+  cursor: zoom-in;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    transition: transform 600ms $ease-out;
+  }
+
+  &:hover,
+  &:focus-visible {
+    @include motion-safe {
+      img {
+        transform: scale(1.04);
+      }
+    }
+
+    .overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: $space-4;
+  background: linear-gradient(to top, rgb(27 20 17 / 0.7), transparent 50%);
+  opacity: 0;
+  transition: opacity 250ms;
+
+  // No hover on touch screens, so always show the title there.
+  @media (hover: none) {
+    opacity: 1;
+  }
+}
+
+.tileTitle {
+  color: #fff8f0;
+  font-family: $font-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-align: left;
+}

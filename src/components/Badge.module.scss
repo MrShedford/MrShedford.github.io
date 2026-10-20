@@ -1,0 +1,32 @@
+@use '../styles/variables' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: $radius-pill;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.category {
+  composes: badge;
+  background: var(--cat);
+  color: var(--on-accent);
+}
+
+.kind {
+  composes: badge;
+  background: var(--kind);
+  color: var(--on-accent);
+}
+
+.draft {
+  composes: badge;
+  border: 1px dashed var(--accent);
+  color: var(--accent);
+}

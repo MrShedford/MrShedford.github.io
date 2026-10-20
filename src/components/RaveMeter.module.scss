@@ -1,0 +1,46 @@
+@use '../styles/variables' as *;
+
+.meter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2 $space-3;
+  --pip-w: 8px;
+  --pip-h: 14px;
+}
+
+.large {
+  composes: meter;
+  --pip-w: 14px;
+  --pip-h: 26px;
+
+  .label {
+    font-size: 1rem;
+  }
+}
+
+.pips {
+  display: flex;
+  gap: 3px;
+}
+
+.pip {
+  width: var(--pip-w);
+  height: var(--pip-h);
+  border-radius: 3px;
+  background: var(--border);
+}
+
+.pipOn {
+  composes: pip;
+  background: var(--cat, var(--accent));
+}
+
+.label {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+
+  strong {
+    color: var(--text);
+  }
+}

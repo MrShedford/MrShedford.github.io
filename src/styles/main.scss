@@ -1,0 +1,160 @@
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'prose';
+
+// Palette. Earthy: terracotta, forest and sage greens, deep reds, ochre, on
+// warm cream (light) or deep umber (dark). Light is the base; dark is a token
+// swap, so no component needs to know which theme is active.
+//
+// Accent colours that carry text (chips, badges) are darkened in light mode
+// and lightened in dark mode so labels on them stay readable.
+
+@mixin light-tokens {
+  --bg: #f6eee3;
+  --bg-wash-1: rgb(192 96 63 / 0.1);
+  --bg-wash-2: rgb(138 154 91 / 0.12);
+  --surface: #fbf6ef;
+  --surface-sunken: #efe3d3;
+  --border: #e3d3bf;
+  --border-strong: #cdb79c;
+  --text: #2e211a;
+  --text-muted: #6e5a4c;
+  --accent: #a94b2b;
+  --accent-soft: #f1d9c8;
+  --on-accent: #fff8f0;
+  --shadow: 0 1px 2px rgb(59 42 32 / 0.06), 0 8px 24px rgb(59 42 32 / 0.08);
+
+  --terracotta: #b4532f;
+  --deep-red: #8b2e2a;
+  --sage: #6b7d45;
+  --forest: #3e5641;
+  --ochre: #8a6414;
+
+  color-scheme: light;
+}
+
+@mixin dark-tokens {
+  --bg: #1b1411;
+  --bg-wash-1: rgb(224 138 98 / 0.08);
+  --bg-wash-2: rgb(157 177 122 / 0.07);
+  --surface: #241b16;
+  --surface-sunken: #16100d;
+  --border: #3a2d25;
+  --border-strong: #56443a;
+  --text: #f1e6d8;
+  --text-muted: #b9a794;
+  --accent: #e08a62;
+  --accent-soft: #3d261c;
+  --on-accent: #1b1411;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+
+  --terracotta: #e08a62;
+  --deep-red: #d9746a;
+  --sage: #a9bb85;
+  --forest: #8fb08f;
+  --ochre: #d9ae52;
+
+  color-scheme: dark;
+}
+
+:root {
+  @include light-tokens;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    @include dark-tokens;
+  }
+}
+
+:root[data-theme='dark'] {
+  @include dark-tokens;
+}
+
+// Per-section accents, picked up by chips, badges and the rave meter.
+[data-category='music'] { --cat: var(--terracotta); }
+[data-category='video-games'] { --cat: var(--forest); }
+[data-category='movies'] { --cat: var(--deep-red); }
+[data-category='tv'] { --cat: var(--ochre); }
+
+[data-kind='job'] { --kind: var(--terracotta); }
+[data-kind='project'] { --kind: var(--forest); }
+[data-kind='education'] { --kind: var(--ochre); }
+[data-kind='award'] { --kind: var(--deep-red); }
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 88px;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(60rem 40rem at 100% -10%, var(--bg-wash-1), transparent 70%),
+    radial-gradient(50rem 40rem at -10% 30%, var(--bg-wash-2), transparent 70%),
+    var(--bg);
+  background-attachment: fixed;
+  color: var(--text);
+  font-family: $font-sans;
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: $font-serif;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 72;
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  @include focus-ring;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

@@ -1,0 +1,179 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// A single rambling or rave.
+
+.article {
+  @include container($prose-width);
+  padding-top: $space-6;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  margin-bottom: $space-6;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--accent);
+  }
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2 $space-3;
+  margin-bottom: $space-4;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.title {
+  font-size: clamp(2.2rem, 6vw, 3.4rem);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 144;
+}
+
+.summary {
+  margin-top: $space-4;
+  font-family: $font-serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.cover {
+  margin: $space-6 0;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: $radius-lg;
+  }
+
+  // Wider than the text column on big screens, for a bit of drama.
+  @include above($bp-tablet) {
+    margin-inline: -80px;
+  }
+}
+
+.body {
+  margin-top: $space-6;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+  margin: $space-7 0 0;
+  padding: $space-5 0 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+
+  li {
+    padding: 4px 12px;
+    border-radius: $radius-pill;
+    background: var(--surface-sunken);
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+}
+
+// The rave-specific panel: what's being reviewed, and the score.
+.verdict {
+  @include card;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: $space-2 $space-5;
+  align-items: center;
+  margin-top: $space-6;
+  padding: $space-5;
+  border-left: 6px solid var(--cat);
+
+  @include below($bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.verdictScore {
+  font-family: $font-serif;
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--cat);
+  font-variant-numeric: tabular-nums;
+
+  small {
+    font-size: 1.2rem;
+    color: var(--text-muted);
+  }
+}
+
+.verdictDetails {
+  display: grid;
+  gap: $space-2;
+}
+
+.verdictSubject {
+  font-family: $font-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+
+  span {
+    font-family: $font-sans;
+    font-size: 0.9375rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+}
+
+.postNav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-4;
+  margin-top: $space-7;
+
+  @include below($bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.postNavLink {
+  @include card;
+  display: grid;
+  gap: $space-1;
+  padding: $space-4 $space-5;
+  font-family: $font-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 150ms;
+
+  &:hover {
+    border-color: var(--accent);
+  }
+}
+
+.postNavLinkNext {
+  composes: postNavLink;
+  text-align: right;
+
+  .postNavLabel {
+    justify-content: flex-end;
+  }
+}
+
+.postNavLabel {
+  @include eyebrow;
+  display: flex;
+  align-items: center;
+  gap: $space-1;
+}

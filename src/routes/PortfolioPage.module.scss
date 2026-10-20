@@ -1,0 +1,72 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.span {
+  display: block;
+  margin-top: $space-3;
+  font-family: $font-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--accent);
+}
+
+.bar {
+  position: sticky;
+  top: 64px;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3 $space-4;
+  margin: 0 (-$gutter) $space-6;
+  padding: $space-3 $gutter;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px) saturate(1.4);
+
+  // The header wraps onto two lines on phones and stops being a fixed height,
+  // so don't stick there: the timeline's own year markers do the job.
+  @include below($bp-mobile) {
+    position: static;
+    background: none;
+    backdrop-filter: none;
+  }
+}
+
+.barEnd {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin-left: auto;
+}
+
+.now {
+  font-family: $font-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--accent);
+
+  @include motion-safe {
+    animation: tick 350ms $ease-out;
+  }
+
+  @include below($bp-mobile) {
+    display: none;
+  }
+}
+
+.pdfLong {
+  @include below($bp-mobile) {
+    display: none;
+  }
+}
+
+@keyframes tick {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}

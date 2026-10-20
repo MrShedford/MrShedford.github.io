@@ -1,0 +1,125 @@
+@use 'variables' as *;
+
+// Long-form text rendered from Markdown. A global class rather than a module,
+// because the elements come from dangerouslySetInnerHTML and can't carry
+// module class names.
+.prose {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  max-width: $prose-width;
+  overflow-wrap: break-word;
+
+  > * + * {
+    margin-top: 1.1em;
+  }
+
+  h2,
+  h3,
+  h4 {
+    margin-top: 1.8em;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  h3 {
+    font-size: 1.3rem;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+
+    &:hover {
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  ul,
+  ol {
+    padding-left: 1.4em;
+  }
+
+  li + li {
+    margin-top: 0.35em;
+  }
+
+  li::marker {
+    color: var(--accent);
+  }
+
+  blockquote {
+    margin-inline: 0;
+    padding: 0.2em 0 0.2em 1.2em;
+    border-left: 3px solid var(--accent);
+    font-family: $font-serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+
+  img {
+    display: block;
+    border-radius: $radius-md;
+    background-color: var(--surface-sunken);
+  }
+
+  figure {
+    margin-inline: 0;
+  }
+
+  figcaption {
+    margin-top: $space-2;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  code {
+    font-family: $font-mono;
+    font-size: 0.9em;
+    padding: 0.1em 0.35em;
+    border-radius: $radius-sm;
+    background: var(--surface-sunken);
+  }
+
+  pre {
+    padding: $space-4;
+    border-radius: $radius-md;
+    background: var(--surface-sunken);
+    overflow-x: auto;
+
+    code {
+      padding: 0;
+      background: none;
+    }
+  }
+
+  hr {
+    border: 0;
+    height: 1px;
+    background: var(--border-strong);
+    margin-block: 2.5em;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+
+  th,
+  td {
+    padding: $space-2 $space-3;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  iframe {
+    max-width: 100%;
+    border: 0;
+    border-radius: $radius-md;
+  }
+}

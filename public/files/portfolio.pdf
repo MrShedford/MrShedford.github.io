@@ -1,0 +1,42 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 4 0 R /Resources << /Font << /F1 5 0 R /F2 6 0 R >> >> >>
+endobj
+4 0 obj
+<< /Length 433 >>
+stream
+0.75 0.376 0.247 rg 0 812 595 30 re f
+0.231 0.165 0.125 rg
+BT /F2 28 Tf 72 760 Td (Portfolio \(placeholder\)) Tj ET
+BT /F1 13 Tf 72 712 Td (This is a placeholder PDF.) Tj ET
+BT /F1 13 Tf 72 690 Td (Replace it with your own: go to /admin, open Site settings,) Tj ET
+BT /F1 13 Tf 72 668 Td (and upload a new file in the "Portfolio PDF" field.) Tj ET
+BT /F1 13 Tf 72 646 Td (Or drop a file at public/files/portfolio.pdf and push.) Tj ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+6 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>
+endobj
+xref
+0 7
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000115 00000 n 
+0000000251 00000 n 
+0000000735 00000 n 
+0000000805 00000 n 
+trailer
+<< /Size 7 /Root 1 0 R >>
+startxref
+876
+%%EOF

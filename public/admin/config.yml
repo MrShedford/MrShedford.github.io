@@ -1,0 +1,214 @@
+# Sveltia CMS configuration: what /admin lets you edit.
+# Docs: https://github.com/sveltia/sveltia-cms
+#
+# Field names and allowed values here must match the schemas in
+# src/content/schema.ts. The build validates every file against those, so a
+# mismatch shows up as a failed deploy naming the file and field.
+
+backend:
+  name: github
+  repo: MrShedford/MrShedford.github.io
+  branch: main
+  commit_messages:
+    create: 'Create {{collection}} “{{slug}}”'
+    update: 'Update {{collection}} “{{slug}}”'
+    delete: 'Delete {{collection}} “{{slug}}”'
+    uploadMedia: 'Upload “{{path}}”'
+    deleteMedia: 'Delete “{{path}}”'
+
+# Uploaded images live in the repo at content/uploads and are referenced from
+# posts as /uploads/<file>. The build turns them into resized WebP copies, so
+# upload full-size originals; never pre-shrink them.
+media_folder: content/uploads
+public_folder: /uploads
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+collections:
+  # ---------------------------------------------------------------- Ramblings
+  - name: ramblings
+    label: Ramblings
+    label_singular: Rambling
+    description: Long-form blog posts.
+    folder: content/ramblings
+    create: true
+    slug: '{{slug}}'
+    summary: '{{title}} · {{date}}'
+    sortable_fields: [date, title]
+    fields:
+      - { label: Title, name: title, widget: string }
+      - label: Date
+        name: date
+        widget: datetime
+        default: '{{now}}'
+        format: YYYY-MM-DD
+        time_format: false
+        picker_utc: true
+      - label: Summary
+        name: summary
+        widget: text
+        required: false
+        hint: One or two sentences, shown on cards and under the title.
+      - { label: Tags, name: tags, widget: list, required: false }
+      - label: Cover image
+        name: cover
+        widget: image
+        required: false
+        hint: Shown at the top of the post and on its card.
+      - label: Draft
+        name: draft
+        widget: boolean
+        default: false
+        hint: Drafts are saved but left off the live site.
+      - { label: Body, name: body, widget: markdown }
+
+  # ------------------------------------------------------------------ Raving
+  - name: raving
+    label: Raving
+    label_singular: Rave
+    description: Reviews of music, video games, movies and TV.
+    folder: content/raving
+    create: true
+    slug: '{{slug}}'
+    summary: '{{title}} · {{category}} · {{rating}}/10'
+    sortable_fields: [date, title, rating]
+    view_groups:
+      - { label: Category, field: category }
+    fields:
+      - { label: Title, name: title, widget: string, hint: 'The headline, e.g. "Forty hours and I’d start it again tomorrow".' }
+      - label: Category
+        name: category
+        widget: select
+        options:
+          - { label: Music, value: music }
+          - { label: Video Games, value: video-games }
+          - { label: Movies, value: movies }
+          - { label: TV, value: tv }
+      - { label: What is it?, name: subject, widget: string, hint: 'The album, game, film or show.' }
+      - { label: Made by, name: creator, widget: string, required: false, hint: 'Artist, studio, director, network…' }
+      - { label: Year, name: year, widget: number, value_type: int, required: false }
+      - label: Rating
+        name: rating
+        widget: number
+        value_type: int
+        min: 1
+        max: 10
+        step: 1
+        hint: 'Out of 10. 10 = all-timer, 9 = instant classic, 8 = full rave, 7 = strong recommend.'
+      - label: Date
+        name: date
+        widget: datetime
+        default: '{{now}}'
+        format: YYYY-MM-DD
+        time_format: false
+        picker_utc: true
+      - { label: Summary, name: summary, widget: text, required: false }
+      - { label: Tags, name: tags, widget: list, required: false }
+      - { label: Cover / artwork, name: cover, widget: image, required: false }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: Review, name: body, widget: markdown }
+
+  # --------------------------------------------------------------- Portfolio
+  - name: portfolio
+    label: Portfolio timeline
+    label_singular: Timeline entry
+    description: Jobs, projects, education and awards. Each becomes a point on the timeline.
+    folder: content/portfolio
+    create: true
+    slug: '{{slug}}'
+    summary: '{{title}} · {{date}}'
+    sortable_fields: [date, title]
+    view_groups:
+      - { label: Kind, field: kind }
+    fields:
+      - { label: Title, name: title, widget: string, hint: 'e.g. "Senior Developer" or "Hackathon winner".' }
+      - label: Kind
+        name: kind
+        widget: select
+        options:
+          - { label: Work, value: job }
+          - { label: Project, value: project }
+          - { label: Education, value: education }
+          - { label: Award, value: award }
+      - { label: Organisation, name: org, widget: string, required: false }
+      - { label: Location, name: location, widget: string, required: false }
+      - label: Start date
+        name: date
+        widget: datetime
+        format: YYYY-MM-DD
+        time_format: false
+        picker_utc: true
+      - label: End date
+        name: endDate
+        widget: datetime
+        required: false
+        format: YYYY-MM-DD
+        time_format: false
+        picker_utc: true
+        hint: Leave empty for a single point in time.
+      - { label: Still ongoing, name: ongoing, widget: boolean, default: false, hint: 'Shows “Present” instead of an end date.' }
+      - { label: Summary, name: summary, widget: text, required: false, hint: Shown on the timeline card. }
+      - { label: Link, name: link, widget: string, required: false, hint: 'Full URL, starting https://' }
+      - { label: Image, name: image, widget: image, required: false, hint: Shown when the entry is expanded. }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+      - { label: Details, name: body, widget: markdown, required: false, hint: Shown when the entry is expanded. }
+
+  # ----------------------------------------------------------------- Gallery
+  - name: gallery
+    label: Gallery
+    label_singular: Photo
+    description: Photography. Upload full-size JPGs; resizing and EXIF are handled at build.
+    folder: content/gallery
+    extension: yml
+    format: yml
+    create: true
+    slug: '{{slug}}'
+    identifier_field: title
+    summary: '{{title}}'
+    sortable_fields: [date, title]
+    media_folder: /content/uploads/gallery
+    public_folder: /uploads/gallery
+    fields:
+      - { label: Photo, name: image, widget: image }
+      - { label: Title, name: title, widget: string }
+      - { label: Caption, name: caption, widget: text, required: false }
+      - label: Date taken
+        name: date
+        widget: datetime
+        required: false
+        format: YYYY-MM-DD
+        time_format: false
+        picker_utc: true
+        hint: Leave empty to use the date the camera recorded.
+      - { label: Tags, name: tags, widget: list, required: false, hint: 'Used for the filter chips, e.g. landscape, city, night.' }
+      - { label: Draft, name: draft, widget: boolean, default: false }
+
+  # ----------------------------------------------------------- Site settings
+  - name: settings
+    label: Site settings
+    editor:
+      preview: false
+    files:
+      - name: site
+        label: Site
+        file: content/site.yml
+        fields:
+          - { label: Your name, name: name, widget: string }
+          - { label: Tagline, name: tagline, widget: string }
+          - { label: Home page intro, name: intro, widget: markdown, required: false }
+          - label: Portfolio PDF
+            name: portfolioPdf
+            widget: file
+            required: false
+            media_folder: /public/files
+            public_folder: /files
+            hint: The file behind the “PDF version” button on the portfolio page.
+          - label: Social links
+            name: socials
+            widget: list
+            required: false
+            fields:
+              - { label: Label, name: label, widget: string }
+              - { label: URL, name: url, widget: string, hint: 'https://… or mailto:…' }

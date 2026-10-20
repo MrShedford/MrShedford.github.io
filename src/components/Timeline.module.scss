@@ -1,0 +1,304 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+// The portfolio timeline: a centre spine that fills as you scroll, entries
+// alternating either side of it, and a dot per entry that lights up while
+// it's being read. On phones the spine moves to the left edge and every
+// entry sits to its right.
+
+$dot: 18px;
+$spine-col: 72px;
+
+.timeline {
+  --spine-x: 50%;
+  position: relative;
+  padding-block: $space-4;
+
+  @include below($bp-tablet) {
+    --spine-x: 15px;
+  }
+}
+
+.track,
+.progress {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--spine-x);
+  border-radius: 4px;
+}
+
+.track {
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--border-strong);
+}
+
+.progress {
+  width: 4px;
+  transform-origin: top;
+  transform: translateX(-50%) scaleY(var(--progress, 0));
+  background: linear-gradient(
+    to bottom,
+    var(--terracotta),
+    var(--deep-red) 45%,
+    var(--ochre) 75%,
+    var(--forest)
+  );
+  will-change: transform;
+}
+
+.rows {
+  position: relative;
+  display: grid;
+  gap: $space-5;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+// --- Year markers --------------------------------------------------------
+
+.yearRow {
+  display: flex;
+  justify-content: center;
+  padding-block: $space-3;
+
+  @include below($bp-tablet) {
+    justify-content: flex-start;
+  }
+}
+
+.year {
+  position: relative;
+  padding: 4px 18px;
+  border: 2px solid var(--border-strong);
+  border-radius: $radius-pill;
+  background: var(--bg);
+  font-family: $font-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+
+  @include below($bp-tablet) {
+    font-size: 1rem;
+    padding: 2px 12px;
+    // Centre the pill on the spine.
+    margin-left: calc(var(--spine-x) - 0.5ch - 14px);
+  }
+}
+
+// --- Entries -------------------------------------------------------------
+
+.entryRow {
+  display: grid;
+  grid-template-columns: 1fr $spine-col 1fr;
+  align-items: start;
+
+  @include below($bp-tablet) {
+    grid-template-columns: 30px 1fr;
+    column-gap: $space-3;
+  }
+}
+
+.dot {
+  grid-row: 1;
+  grid-column: 2;
+  justify-self: center;
+  width: $dot;
+  height: $dot;
+  margin-top: 26px;
+  border: 3px solid var(--kind);
+  border-radius: 50%;
+  background: var(--bg);
+  transition:
+    background-color 250ms,
+    box-shadow 250ms,
+    transform 250ms $ease-out;
+
+  @include below($bp-tablet) {
+    grid-column: 1;
+  }
+
+  .entryRow[data-active] & {
+    background: var(--kind);
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--kind) 22%, transparent);
+    transform: scale(1.25);
+  }
+}
+
+.card {
+  @include card;
+  grid-row: 1;
+  position: relative;
+  padding: $space-5;
+  transition:
+    border-color 250ms,
+    box-shadow 250ms;
+
+  .entryRow[data-side='left'] & {
+    grid-column: 1;
+  }
+
+  .entryRow[data-side='right'] & {
+    grid-column: 3;
+  }
+
+  @include below($bp-tablet) {
+    .entryRow[data-side] & {
+      grid-column: 2;
+    }
+  }
+
+  .entryRow[data-active] & {
+    border-color: var(--kind);
+    box-shadow: var(--shadow);
+  }
+}
+
+.cardHeader {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2 $space-3;
+  margin-bottom: $space-3;
+}
+
+.range {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.title {
+  font-size: 1.4rem;
+}
+
+.org {
+  margin-top: $space-1;
+  font-weight: 500;
+  color: var(--kind);
+}
+
+.summary {
+  margin-top: $space-3;
+  color: var(--text-muted);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  margin-top: $space-4;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+}
+
+.chevron {
+  display: inline-flex;
+  transition: transform 200ms;
+}
+
+.chevronOpen {
+  composes: chevron;
+  transform: rotate(180deg);
+}
+
+.details {
+  display: grid;
+  gap: $space-4;
+  margin-top: $space-4;
+  padding-top: $space-4;
+  border-top: 1px solid var(--border);
+
+  // display: grid would otherwise beat the hidden attribute.
+  &[hidden] {
+    display: none;
+  }
+
+  @include motion-safe {
+    animation: unfold 300ms $ease-out;
+  }
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: $radius-md;
+}
+
+.prose {
+  font-size: 0.975rem;
+}
+
+.link {
+  @include chip;
+  justify-self: start;
+  text-decoration: none;
+}
+
+// --- Reveal on scroll ----------------------------------------------------
+// Only once the scroll hook has attached ([data-reveal-ready]), and only for
+// people who haven't asked for reduced motion. Everyone else just sees it.
+
+@include motion-safe {
+  .timeline[data-reveal-ready] {
+    .yearRow:not([data-visible]) .year {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+
+    .entryRow:not([data-visible]) {
+      .card {
+        opacity: 0;
+        transform: translate(var(--from-x, 0), 32px);
+      }
+
+      .dot {
+        transform: scale(0);
+      }
+    }
+
+    .entryRow[data-side='left'] {
+      --from-x: -32px;
+    }
+
+    .entryRow[data-side='right'] {
+      --from-x: 32px;
+    }
+
+    @include below($bp-tablet) {
+      .entryRow[data-side] {
+        --from-x: 24px;
+      }
+    }
+
+    .year,
+    .card {
+      transition:
+        opacity 600ms $ease-out,
+        transform 600ms $ease-out,
+        border-color 250ms,
+        box-shadow 250ms;
+    }
+  }
+}
+
+@keyframes unfold {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}

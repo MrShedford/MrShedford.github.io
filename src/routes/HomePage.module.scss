@@ -1,0 +1,260 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.hero {
+  padding-block: $space-8 $space-7;
+
+  @include below($bp-mobile) {
+    padding-block: $space-7 $space-6;
+  }
+}
+
+.hello {
+  @include eyebrow;
+  color: var(--accent);
+  margin-bottom: $space-3;
+}
+
+.name {
+  font-size: clamp(3rem, 11vw, 7rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  font-variation-settings: 'opsz' 144;
+  // Ink that shifts from terracotta to deep red to forest.
+  background: linear-gradient(100deg, var(--terracotta), var(--deep-red) 55%, var(--forest));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+}
+
+.tagline {
+  margin-top: $space-4;
+  font-family: $font-serif;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.intro {
+  margin-top: $space-5;
+  font-size: 1.125rem;
+}
+
+.sections {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-4;
+
+  @include below($bp-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @include below(420px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.section {
+  --tone: var(--accent);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-5;
+  border-radius: $radius-lg;
+  background: color-mix(in srgb, var(--tone) 12%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--tone) 30%, transparent);
+  text-decoration: none;
+  overflow: hidden;
+  transition:
+    transform 250ms $ease-out,
+    background-color 250ms,
+    box-shadow 250ms;
+
+  &[data-tone='terracotta'] { --tone: var(--terracotta); }
+  &[data-tone='red'] { --tone: var(--deep-red); }
+  &[data-tone='forest'] { --tone: var(--forest); }
+  &[data-tone='ochre'] { --tone: var(--ochre); }
+
+  &:hover {
+    background: color-mix(in srgb, var(--tone) 20%, var(--surface));
+    box-shadow: var(--shadow);
+
+    @include motion-safe {
+      transform: translateY(-3px);
+
+      svg {
+        transform: translateX(4px);
+      }
+    }
+  }
+}
+
+.sectionLabel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: $font-serif;
+  font-size: 1.5rem;
+  font-weight: 650;
+  color: var(--tone);
+
+  svg {
+    transition: transform 250ms $ease-out;
+  }
+}
+
+.sectionBlurb {
+  font-size: 0.9375rem;
+  color: var(--text-muted);
+}
+
+.sectionCount {
+  margin-top: auto;
+  padding-top: $space-2;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.block {
+  margin-top: $space-8;
+
+  @include below($bp-mobile) {
+    margin-top: $space-7;
+  }
+}
+
+.twoUp {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-5;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: grid;
+  }
+
+  @include below($bp-tablet) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.miniTimeline {
+  position: relative;
+  display: grid;
+  gap: $space-5;
+  margin: 0;
+  padding: 0 0 0 $space-2;
+  list-style: none;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: calc($space-2 + 6px);
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: var(--border-strong);
+  }
+
+  li {
+    position: relative;
+    display: grid;
+    grid-template-columns: 14px 1fr;
+    gap: $space-4;
+  }
+}
+
+.miniDot {
+  width: 14px;
+  height: 14px;
+  margin-top: 5px;
+  border-radius: 50%;
+  border: 3px solid var(--kind);
+  background: var(--bg);
+}
+
+.miniMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.miniTitle {
+  margin-top: $space-1;
+  font-family: $font-serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+
+  span {
+    font-family: $font-sans;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+}
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-3;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include below($bp-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.stripLink {
+  display: block;
+  aspect-ratio: 1;
+  border-radius: $radius-md;
+  overflow: hidden;
+  background: var(--surface-sunken);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 500ms $ease-out;
+  }
+
+  @include motion-safe {
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+}
+
+// Exactly four raves on the home page, so never a lone orphan on the last row.
+.fourUp {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-5;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  > li {
+    display: grid;
+  }
+
+  @include below($bp-tablet) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: $space-4;
+  }
+
+  @include below(420px) {
+    grid-template-columns: 1fr;
+  }
+}

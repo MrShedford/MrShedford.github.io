@@ -1,0 +1,37 @@
+@use '../styles/variables' as *;
+@use '../styles/mixins' as *;
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-2;
+
+  // One scrollable row on phones instead of a tall stack of wrapped chips.
+  @include below($bp-mobile) {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin-inline: -$gutter;
+    padding-inline: $gutter;
+    padding-block: 4px;
+    scrollbar-width: none;
+  }
+}
+
+.chip {
+  @include chip;
+  flex-shrink: 0;
+
+  &[data-category] {
+    --chip-accent: var(--cat);
+  }
+
+  &[data-kind] {
+    --chip-accent: var(--kind);
+  }
+}
+
+.count {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  font-variant-numeric: tabular-nums;
+}

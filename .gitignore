@@ -1,0 +1,8 @@
+node_modules
+dist
+*.tsbuildinfo
+.DS_Store
+
+# Generated from content/ by scripts/content.ts on every dev start and build.
+public/data
+public/img

@@ -1,0 +1,80 @@
+@use 'variables' as *;
+
+@mixin below($breakpoint) {
+  @media (max-width: $breakpoint) {
+    @content;
+  }
+}
+
+@mixin above($breakpoint) {
+  @media (min-width: ($breakpoint + 1)) {
+    @content;
+  }
+}
+
+@mixin card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: $radius-lg;
+}
+
+// Respects the user's reduced-motion setting for anything decorative.
+@mixin motion-safe {
+  @media (prefers-reduced-motion: no-preference) {
+    @content;
+  }
+}
+
+@mixin focus-ring {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@mixin container($width: $content-width) {
+  width: 100%;
+  max-width: $width + 2 * $gutter;
+  margin-inline: auto;
+  padding-inline: $gutter;
+}
+
+@mixin eyebrow {
+  font-family: $font-sans;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@mixin chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: 6px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: $radius-pill;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+
+  &:hover {
+    border-color: var(--chip-accent, var(--accent));
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &[aria-pressed='true'] {
+    background: var(--chip-accent, var(--accent));
+    border-color: var(--chip-accent, var(--accent));
+    color: var(--on-accent);
+  }
+}
