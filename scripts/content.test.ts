@@ -1,5 +1,7 @@
 import assert from 'node:assert/strict'
 import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from 'node:fs/promises'
+import { createServer, type Server } from 'node:http'
+import type { AddressInfo } from 'node:net'
 import { tmpdir } from 'node:os'
 import path from 'node:path'
 import { after, before, describe, test } from 'node:test'
@@ -23,6 +25,11 @@ async function fixture(files: Record<string, string | Buffer>): Promise<string> 
 
 async function readJson<T>(root: string, file: string): Promise<T> {
   return JSON.parse(await readFile(path.join(root, 'public', 'data', file), 'utf8')) as T
+}
+
+/** A rave whose cover is the given image reference. */
+function rave(cover: string): string {
+  return `---\ntitle: X\ndate: 2025-01-01\ncategory: video-games\nsubject: Y\nrating: 9\ncover: ${cover}\n---\n`
 }
 
 const roots: string[] = []
@@ -180,6 +187,55 @@ describe('images', () => {
     assert.match(post.html, /<figure><img src="\/img\/pic-[0-9a-f]{10}-960\.webp" srcset="[^"]+"/)
     assert.match(post.html, /alt="Alt text"/)
     assert.match(post.html, /<figcaption>A caption<\/figcaption>/)
+  })
+
+  describe('image URLs (pasted into the CMS instead of uploaded)', () => {
+    let server: Server
+    let origin: string
+    let hits = 0
+    before(async () => {
+      server = createServer((req, res) => {
+        hits++
+        if (req.url === '/cover.jpg') {
+          res.writeHead(200, { 'content-type': 'image/jpeg' })
+          res.end(photo)
+        } else if (req.url === '/page.html') {
+          res.writeHead(200, { 'content-type': 'text/html' })
+          res.end('<!doctype html><p>not an image</p>')
+        } else {
+          res.writeHead(404)
+          res.end()
+        }
+      })
+      await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve))
+      origin = `http://127.0.0.1:${(server.address() as AddressInfo).port}`
+    })
+    after(() => new Promise<void>((resolve) => server.close(() => resolve())))
+
+    test('downloads and processes them like uploads, once', async () => {
+      const { root } = await build({ 'raving/x.md': rave(`${origin}/cover.jpg`) })
+      const [entry] = await readJson<Array<{ cover: Record<string, unknown> }>>(root, 'raving.json')
+      assert.match(String(entry!.cover.src), /^\/img\/cover-[0-9a-f]{10}-960\.webp$/)
+      assert.equal(entry!.cover.width, 1200)
+
+      const hitsBefore = hits
+      await buildContent({ root, base: '/', includeDrafts: false })
+      assert.equal(hits, hitsBefore, 'a rebuild should reuse the download')
+    })
+
+    test('names the file and link when a URL is dead', async () => {
+      await assert.rejects(
+        build({ 'raving/x.md': rave(`${origin}/gone.jpg`) }),
+        /content\/raving\/x\.md: couldn't download image ".*\/gone\.jpg" \(HTTP 404\)/,
+      )
+    })
+
+    test('rejects a URL that is a web page, not an image', async () => {
+      await assert.rejects(
+        build({ 'raving/x.md': rave(`${origin}/page.html`) }),
+        /content\/raving\/x\.md: image ".*\/page\.html" is not a readable image/,
+      )
+    })
   })
 
   test('reuses unchanged images and prunes ones no longer used', async () => {

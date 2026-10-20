@@ -21,6 +21,7 @@ const WIDTHS = [480, 960, 1600, 2400]
 /** The `src` fallback, for the rare browser that ignores srcset. */
 const DEFAULT_WIDTH = 960
 const MANIFEST = 'manifest.json'
+const REMOTE_MANIFEST = 'remote.json'
 
 /** Content refers to uploads by this URL prefix, which is what the CMS writes. */
 export const UPLOADS_PREFIX = '/uploads/'
@@ -55,34 +56,76 @@ export async function createImageProcessor(options: {
 
   const manifest = await readManifest(path.join(outDir, MANIFEST))
   const used: Manifest = {}
+  // Image URLs (pasted into the CMS instead of uploading) -> the hash of what
+  // was downloaded, so a rebuild doesn't fetch them again.
+  const remote = await readManifest<Record<string, string>>(path.join(outDir, REMOTE_MANIFEST))
+  const usedRemote: Record<string, string> = {}
   const inFlight = new Map<string, Promise<ProcessedImage>>()
   const limit = createLimiter(3)
 
-  async function processFile(file: string): Promise<ProcessedImage> {
-    const source = await readFile(file)
+  async function processSource(source: Buffer, filename: string, label: string): Promise<ProcessedImage> {
     const hash = createHash('sha1').update(source).digest('hex').slice(0, 10)
-
     let entry = manifest[hash]
-    if (!entry || !entry.widths.every((w) => existsSync(outputPath(entry!.name, w)))) {
-      entry = await limit(() => encode(file, source, hash))
+    if (!entry || !isEncoded(entry)) {
+      entry = await limit(() => encode(source, filename, hash, label))
     }
     used[hash] = entry
     return toImageSet(entry)
   }
 
-  async function encode(file: string, source: Buffer, hash: string): Promise<ManifestEntry> {
+  async function processRemote(url: string, from: string): Promise<ProcessedImage> {
+    const known = remote[url]
+    const cached = known ? manifest[known] : undefined
+    if (known && cached && isEncoded(cached)) {
+      used[known] = cached
+      usedRemote[url] = known
+      return toImageSet(cached)
+    }
+
+    let source: Buffer
+    try {
+      const response = await fetch(url, { signal: AbortSignal.timeout(30_000) })
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      source = Buffer.from(await response.arrayBuffer())
+    } catch (error) {
+      throw new ContentError(
+        `${from}: couldn't download image "${url}" (${error instanceof Error ? error.message : String(error)}). ` +
+          'Check the link, or upload the image instead.',
+      )
+    }
+    const image = await processSource(source, new URL(url).pathname, `${from}: image "${url}"`)
+    usedRemote[url] = createHash('sha1').update(source).digest('hex').slice(0, 10)
+    return image
+  }
+
+  function isEncoded(entry: ManifestEntry): boolean {
+    return entry.widths.every((w) => existsSync(outputPath(entry.name, w)))
+  }
+
+  async function encode(
+    source: Buffer,
+    filename: string,
+    hash: string,
+    label: string,
+  ): Promise<ManifestEntry> {
     const stem = path
-      .basename(file, path.extname(file))
+      .basename(filename, path.extname(filename))
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '')
+      .slice(0, 60)
     const name = `${stem || 'image'}-${hash}`
 
     // .rotate() with no argument applies the EXIF orientation, so phone
     // photos come out the right way up and the reported size matches.
-    const metadata = await sharp(source).metadata()
-    const { width, height } = metadata.autoOrient
-    if (!width || !height) throw new ContentError(`${file}: not a readable image`)
+    let width: number | undefined
+    let height: number | undefined
+    try {
+      ;({ width, height } = (await sharp(source).metadata()).autoOrient)
+    } catch {
+      // e.g. a URL that returned a web page rather than an image
+    }
+    if (!width || !height) throw new ContentError(`${label} is not a readable image`)
 
     const widths = WIDTHS.filter((w) => w < width)
     widths.push(Math.min(width, WIDTHS.at(-1)!))
@@ -128,9 +171,17 @@ export async function createImageProcessor(options: {
 
   return {
     process(reference, from) {
+      if (/^https?:\/\//i.test(reference)) {
+        let pending = inFlight.get(reference)
+        if (!pending) {
+          pending = processRemote(reference, from)
+          inFlight.set(reference, pending)
+        }
+        return pending
+      }
       if (!reference.startsWith(UPLOADS_PREFIX)) {
         throw new ContentError(
-          `${from}: image "${reference}" must be an upload (a path starting with ${UPLOADS_PREFIX})`,
+          `${from}: image "${reference}" must be an upload (a path starting with ${UPLOADS_PREFIX}) or a full https:// link`,
         )
       }
       const file = path.join(uploadsDir, ...reference.slice(UPLOADS_PREFIX.length).split('/'))
@@ -143,7 +194,9 @@ export async function createImageProcessor(options: {
 
       let pending = inFlight.get(file)
       if (!pending) {
-        pending = processFile(file)
+        pending = readFile(file).then((source) =>
+          processSource(source, file, `${from}: image "${reference}"`),
+        )
         inFlight.set(file, pending)
       }
       return pending
@@ -151,7 +204,8 @@ export async function createImageProcessor(options: {
 
     async finish() {
       await writeFile(path.join(outDir, MANIFEST), JSON.stringify(used, null, 2))
-      const keep = new Set([MANIFEST])
+      await writeFile(path.join(outDir, REMOTE_MANIFEST), JSON.stringify(usedRemote, null, 2))
+      const keep = new Set([MANIFEST, REMOTE_MANIFEST])
       for (const entry of Object.values(used)) {
         for (const w of entry.widths) keep.add(`${entry.name}-${w}.webp`)
       }
@@ -161,9 +215,9 @@ export async function createImageProcessor(options: {
   }
 }
 
-async function readManifest(file: string): Promise<Manifest> {
+async function readManifest<T = Manifest>(file: string): Promise<T | Record<string, never>> {
   try {
-    return JSON.parse(await readFile(file, 'utf8')) as Manifest
+    return JSON.parse(await readFile(file, 'utf8')) as T
   } catch {
     // Missing or corrupt: start over. Worst case is re-encoding everything.
     return {}

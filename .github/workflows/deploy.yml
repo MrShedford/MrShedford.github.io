@@ -27,12 +27,13 @@ jobs:
           node-version: 24
           cache: npm
 
-      # Resized images, keyed on the originals. An unchanged photo is then a
+      # Resized images, keyed on all content: uploads, plus posts that link
+      # an image by URL (downloaded at build). An unchanged photo is then a
       # cache hit instead of a re-encode, which keeps big galleries fast.
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         with:
           path: public/img
-          key: images-${{ hashFiles('content/uploads/**') }}
+          key: images-${{ hashFiles('content/**') }}
           restore-keys: images-
 
       - run: npm ci
