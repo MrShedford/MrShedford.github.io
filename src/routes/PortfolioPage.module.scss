@@ -4,7 +4,7 @@
 .span {
   display: block;
   margin-top: $space-3;
-  font-family: $font-serif;
+  font-family: $font-display;
   font-size: 1.5rem;
   font-weight: 600;
   font-style: italic;
@@ -43,7 +43,7 @@
 }
 
 .now {
-  font-family: $font-serif;
+  font-family: $font-display;
   font-size: 1.5rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;

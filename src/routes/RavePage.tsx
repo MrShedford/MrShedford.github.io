@@ -1,6 +1,6 @@
 import { getRouteApi, Link } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { CATEGORY_LABELS } from '@/content/taxonomy'
+import { CATEGORY_NOUNS } from '@/content/taxonomy'
 import { ravingQuery, ravingsQuery } from '@/lib/queries'
 import { formatDate } from '@/lib/format'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
@@ -23,7 +23,7 @@ export function RavePage() {
   return (
     <article className={styles.article} data-category={rave.category}>
       <Link to="/raving" search={{ category: rave.category }} className={styles.back}>
-        <Icon name="arrowLeft" size={16} /> All {CATEGORY_LABELS[rave.category].toLowerCase()} raves
+        <Icon name="arrowLeft" size={16} /> All {CATEGORY_NOUNS[rave.category]} raves
       </Link>
 
       <header>

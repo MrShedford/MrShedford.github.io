@@ -1,6 +1,6 @@
 import { getRouteApi } from '@tanstack/react-router'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { CATEGORY_LABELS, RAVING_CATEGORIES, type RavingCategory } from '@/content/taxonomy'
+import { CATEGORY_LABELS, CATEGORY_NOUNS, RAVING_CATEGORIES, type RavingCategory } from '@/content/taxonomy'
 import { ravingsQuery } from '@/lib/queries'
 import { countByCategory, filterByCategory } from '@/lib/raving'
 import { useDocumentTitle } from '@/hooks/useDocumentTitle'
@@ -57,7 +57,7 @@ export function RavingPage() {
 
       {visible.length === 0 ? (
         <p className={styles.empty}>
-          No {category ? CATEGORY_LABELS[category].toLowerCase() : ''} raves yet.
+          No {category ? `${CATEGORY_NOUNS[category]} ` : ''}raves yet.
         </p>
       ) : (
         <ul className={styles.grid}>

@@ -17,6 +17,14 @@ export const CATEGORY_LABELS: Record<RavingCategory, string> = {
   tv: 'TV',
 }
 
+/** For running text: "All TV raves", "No video game raves yet". */
+export const CATEGORY_NOUNS: Record<RavingCategory, string> = {
+  music: 'music',
+  'video-games': 'video game',
+  movies: 'movie',
+  tv: 'TV',
+}
+
 export const TIMELINE_KINDS = ['job', 'project', 'education', 'award'] as const
 export type TimelineKind = (typeof TIMELINE_KINDS)[number]
 

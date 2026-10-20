@@ -20,7 +20,6 @@
   font-weight: 700;
   line-height: 0.95;
   letter-spacing: -0.035em;
-  font-variation-settings: 'opsz' 144;
   // Ink that shifts from terracotta to deep red to forest.
   background: linear-gradient(100deg, var(--terracotta), var(--deep-red) 55%, var(--forest));
   -webkit-background-clip: text;
@@ -31,7 +30,7 @@
 
 .tagline {
   margin-top: $space-4;
-  font-family: $font-serif;
+  font-family: $font-display;
   font-size: clamp(1.25rem, 3vw, 1.75rem);
   font-style: italic;
   color: var(--text-muted);
@@ -96,7 +95,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-family: $font-serif;
+  font-family: $font-display;
   font-size: 1.5rem;
   font-weight: 650;
   color: var(--tone);
@@ -190,7 +189,7 @@
 
 .miniTitle {
   margin-top: $space-1;
-  font-family: $font-serif;
+  font-family: $font-display;
   font-size: 1.2rem;
   font-weight: 600;
 
